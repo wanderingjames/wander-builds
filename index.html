@@ -4,16 +4,56 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wander Builds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;max-width:720px;margin:80px auto;padding:0 24px;color:#0f0f0f}
-  h1{font-size:28px;margin-bottom:24px}
-  a{display:block;padding:16px 20px;border:1px solid #e2e2e2;border-radius:10px;margin-bottom:12px;text-decoration:none;color:#0f0f0f;font-weight:500}
-  a:hover{background:#f7f7f7}
+  :root{
+    --bg:#fafaf8; --card:#fff; --tx:#0f0f0f; --tx2:#6b6b6b; --line:#e8e6e2;
+    --f:'Instrument Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--f);background:var(--bg);color:var(--tx);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1040px;margin:0 auto;padding:72px 24px 96px}
+  h1{font-size:34px;font-weight:600;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{font-size:16px;color:var(--tx2);margin:0 0 48px;max-width:46em}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  @media (max-width:800px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;
+    display:block;transition:transform .15s ease, box-shadow .15s ease}
+  .card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.08)}
+  .thumb{position:relative;width:100%;aspect-ratio:16/10;overflow:hidden;background:#eee;border-bottom:1px solid var(--line)}
+  .thumb iframe{position:absolute;top:0;left:0;width:250%;height:250%;border:0;pointer-events:none;transform:scale(.4);transform-origin:top left}
+  .meta{padding:20px 22px 24px}
+  .name{font-size:17px;font-weight:600;letter-spacing:-.01em;margin:0 0 6px}
+  .desc{font-size:13.5px;color:var(--tx2);margin:0 0 14px;line-height:1.5}
+  .open{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--tx)}
+  .open svg{width:14px;height:14px}
 </style>
 </head>
 <body>
+<div class="wrap">
   <h1>Wander Builds</h1>
-  <a href="maximize-reach.html">Maximize your reach through Wander</a>
-  <a href="performance-plan-builder.html">Performance by Wander — Plan Builder</a>
+  <p class="lede">Interactive tools built for Wander. Click a preview to open the live version — full functionality, not just a screenshot.</p>
+  <div class="grid">
+    <a class="card" href="maximize-reach.html" target="_blank" rel="noopener">
+      <div class="thumb"><iframe src="maximize-reach.html" tabindex="-1" aria-hidden="true"></iframe></div>
+      <div class="meta">
+        <p class="name">Maximize your reach through Wander</p>
+        <p class="desc">Dial in a monthly budget and see the projected impressions Wander's channels deliver.</p>
+        <span class="open">Open tool <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></span>
+      </div>
+    </a>
+    <a class="card" href="performance-plan-builder.html" target="_blank" rel="noopener">
+      <div class="thumb"><iframe src="performance-plan-builder.html" tabindex="-1" aria-hidden="true"></iframe></div>
+      <div class="meta">
+        <p class="name">Performance by Wander — Plan Builder</p>
+        <p class="desc">Build out a performance marketing plan and see projected outcomes before committing spend.</p>
+        <span class="open">Open tool <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></span>
+      </div>
+    </a>
+  </div>
+</div>
 </body>
 </html>
