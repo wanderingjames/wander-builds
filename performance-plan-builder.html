@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance by Wander — Plan Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#000; --elev1:#0b0b0d; --elev2:#131316; --input:#17171a;
+  --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.18);
+  --tx:#fff; --tx2:#9a9a9e; --tx3:#68686d;
+  --ok:#22c55e; --ok2:#16a34a; --warm:#c0aea0; --warn:#e0b341;
+  --r:20px; --ri:12px; --rp:999px;
+  --f:'Instrument Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--f);background:var(--bg);color:var(--tx);font-size:15px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(1100px 560px at 50% -8%,rgba(192,174,160,.07),transparent 70%),
+                   radial-gradient(900px 500px at 85% 100%,rgba(34,197,94,.045),transparent 70%);
+  background-attachment:fixed;
+}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:'tnum'}
+.wrap{max-width:1180px;margin:0 auto;padding:80px 24px 96px}
+
+/* header */
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);margin-bottom:14px}
+h2.title{font-size:clamp(2rem,4vw,3.1rem);font-weight:600;letter-spacing:-.028em;line-height:1.04;margin:0 0 16px;max-width:16em}
+.title .dim{color:rgba(255,255,255,.45)}
+.lede{font-size:17px;color:var(--tx2);max-width:44em;margin:0 0 44px}
+
+/* grid */
+.grid{display:grid;grid-template-columns:372px 1fr;gap:20px;align-items:start}
+
+/* cards */
+.card{background:var(--elev1);border:1px solid var(--line);border-radius:var(--r);padding:26px}
+.card+.card{margin-top:20px}
+.panel-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:20px}
+.panel-num{font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--tx3);text-transform:uppercase}
+.panel-title{font-size:19px;font-weight:600;letter-spacing:-.015em;margin:0}
+.panel-sub{font-size:13px;color:var(--tx3);margin:-14px 0 20px}
+
+/* inputs */
+.ctrl+.ctrl{margin-top:22px}
+.ctrl-label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+.ctrl-label span:first-child{font-size:13px;font-weight:500;color:var(--tx2)}
+.ctrl-val{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.hint{font-size:12px;color:var(--tx3);margin-top:8px}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:999px;
+  background:linear-gradient(to right,#fff 0%,#fff var(--pct,0%),rgba(255,255,255,.12) var(--pct,0%),rgba(255,255,255,.12) 100%);outline:none;margin:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;border:none;box-shadow:0 1px 6px rgba(0,0,0,.7);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:none;cursor:pointer}
+input[type=range]:focus-visible{outline:2px solid var(--warm);outline-offset:6px}
+.txt{display:flex;align-items:center;background:var(--input);border:1px solid var(--line);border-radius:var(--ri);padding:11px 14px;gap:7px;transition:border-color .15s}
+.txt:focus-within{border-color:var(--line2)}
+.txt .pre{color:var(--tx3);font-size:16px;font-weight:500}
+.txt input{flex:1;min-width:0;font-family:inherit;font-size:16px;font-weight:500;font-variant-numeric:tabular-nums;background:transparent;border:none;outline:none;color:var(--tx);padding:0}
+.seg{display:grid;gap:4px;background:var(--input);border:1px solid var(--line);padding:4px;border-radius:var(--rp)}
+.seg button{font-family:inherit;font-size:13px;font-weight:500;background:transparent;border:none;border-radius:var(--rp);padding:9px 6px;color:var(--tx2);cursor:pointer;transition:background .15s,color .15s}
+.seg button:hover{color:var(--tx)}
+.seg button[aria-pressed=true]{background:rgba(255,255,255,.11);color:var(--tx)}
+.seg button:focus-visible{outline:2px solid var(--warm);outline-offset:2px}
+.rule{height:1px;background:var(--line);margin:24px 0}
+
+/* spend summary */
+.spend{background:var(--elev2);border:1px solid var(--line);border-radius:var(--ri);padding:16px 18px;margin-top:24px}
+.spend-row{display:flex;justify-content:space-between;font-size:13px;color:var(--tx2);padding:3px 0}
+.spend-row .v{color:var(--tx);font-variant-numeric:tabular-nums}
+.spend-total{display:flex;justify-content:space-between;align-items:baseline;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.spend-total .l{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3)}
+.spend-total .v{font-size:26px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.floor{display:none;margin-top:12px;padding:10px 13px;border-radius:10px;font-size:12.5px;line-height:1.45;
+  background:rgba(224,179,65,.09);border:1px solid rgba(224,179,65,.3);color:var(--warn)}
+.floor.show{display:block}
+
+/* panel 1 reach */
+.big{font-size:clamp(2.1rem,3.6vw,2.9rem);font-weight:600;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.big.ok{color:var(--ok)}
+.big-cap{font-size:12.5px;color:var(--tx3);margin-top:10px}
+.chan{margin-top:24px}
+.chan-row{display:grid;grid-template-columns:104px 1fr 74px;gap:14px;align-items:center;padding:5px 0}
+.chan-name{font-size:13px;color:var(--tx2)}
+.track{height:22px;background:rgba(255,255,255,.05);border-radius:7px;overflow:hidden}
+.bar{height:100%;border-radius:7px;min-width:2px;transition:width .35s cubic-bezier(.2,.7,.3,1)}
+.bar.fb{background:linear-gradient(90deg,#4267B2,#2b4a86)}
+.bar.ig{background:linear-gradient(90deg,#e1306c,#b21e52)}
+.bar.gg{background:linear-gradient(90deg,#e8b21f,#c08d0d)}
+.bar.ai{background:linear-gradient(90deg,#8b93a7,#5f6675)}
+.bar.em{background:linear-gradient(90deg,var(--ok),var(--ok2))}
+.chan-v{text-align:right;font-size:13px;font-variant-numeric:tabular-nums;color:var(--tx)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px;padding-top:22px;border-top:1px solid var(--line)}
+.mini-l{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3);margin-bottom:8px}
+.mini-v{font-size:22px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.mini-h{font-size:12px;color:var(--tx3);margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
+.chip{font-size:12px;padding:5px 11px;border-radius:var(--rp);background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.26);color:#7ee2a3}
+
+/* panel 2 cost */
+.cpm-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.rep{margin-top:24px;padding-top:22px;border-top:1px solid var(--line)}
+.rep-row{display:grid;grid-template-columns:1fr auto;gap:12px;font-size:13.5px;color:var(--tx2);padding:6px 0}
+.rep-row .v{color:var(--tx);font-variant-numeric:tabular-nums}
+.rep-row.na .v{color:var(--tx3)}
+.rep-tot{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:baseline;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.rep-tot .l{font-size:13.5px;color:var(--tx)}
+.rep-tot .v{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.verdict{margin-top:16px;padding:14px 17px;border-radius:var(--ri);background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.26);font-size:14px;line-height:1.5}
+.verdict strong{color:var(--ok);font-weight:600}
+details.assump{margin-top:16px}
+details.assump summary{list-style:none;cursor:pointer;font-size:12px;color:var(--tx3);display:inline-flex;gap:6px;align-items:center}
+details.assump summary::-webkit-details-marker{display:none}
+details.assump summary:hover{color:var(--tx2)}
+details.assump[open] summary .cv{transform:rotate(180deg)}
+.cv{transition:transform .2s;display:inline-block}
+.assump-body{margin-top:12px;font-size:12.5px;color:var(--tx3);line-height:1.6}
+.assump-body li{margin-bottom:5px}
+
+/* panel 3 breakeven */
+.be-math{margin-top:20px;padding:15px 17px;background:var(--elev2);border:1px solid var(--line);border-radius:var(--ri);font-size:13px;color:var(--tx2);line-height:1.6}
+.be-math .v{color:var(--tx);font-variant-numeric:tabular-nums;font-weight:500}
+.be-ctx{margin-top:16px;font-size:13.5px;color:var(--tx2);line-height:1.55}
+.be-ctx strong{color:var(--tx);font-weight:600}
+.honest{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--tx3);line-height:1.6}
+
+/* plan match */
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+.plan{background:var(--elev1);border:1px solid var(--line);border-radius:16px;padding:20px 18px;transition:border-color .2s,background .2s}
+.plan.on{border-color:rgba(255,255,255,.42);background:var(--elev2)}
+.plan .pn{font-size:15px;font-weight:600}
+.plan .pp{font-size:12px;color:var(--tx3);margin-top:3px}
+.plan .pr{font-size:20px;font-weight:600;margin-top:14px;letter-spacing:-.02em}
+.plan .pt{font-size:11px;letter-spacing:.07em;text-transform:uppercase;margin-top:10px;color:var(--tx3)}
+.plan.on .pt{color:var(--ok)}
+
+/* cta */
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.btn{font-family:inherit;font-size:14px;font-weight:500;padding:13px 24px;border-radius:var(--rp);cursor:pointer;border:1px solid transparent;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn:focus-visible{outline:2px solid var(--warm);outline-offset:2px}
+.b1{background:#fff;color:#000}
+.b1:hover{background:#e6e6e6}
+.b2{background:rgba(255,255,255,.06);color:var(--tx);border-color:var(--line2)}
+.b2:hover{background:rgba(255,255,255,.11)}
+.foot{margin-top:24px;font-size:12px;color:var(--tx3);max-width:70em;line-height:1.6}
+
+@media (max-width:980px){
+  .grid{grid-template-columns:1fr}
+  .plans{grid-template-columns:1fr}
+  .chan-row{grid-template-columns:88px 1fr 66px;gap:10px}
+}
+@media (max-width:600px){
+  .wrap{padding:56px 18px 72px}
+  .card{padding:20px 18px}
+  .duo,.cpm-row{grid-template-columns:1fr;gap:18px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+  body{background:#fff;color:#000;background-image:none}
+  .card,.plan{background:#fff!important;border:1px solid #ccc!important;break-inside:avoid}
+  .cta,input[type=range],details.assump{display:none!important}
+  .big,.mini-v,.spend-total .v,.rep-tot .v,.plan .pr,h2.title,.lede,.panel-title{color:#000!important}
+  .big.ok,.verdict strong,.be-ctx strong{color:#16a34a!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">Build your plan</div>
+  <h2 class="title">See exactly what your budget buys <span class="dim">before you spend a dollar</span></h2>
+  <p class="lede">Set your portfolio size and monthly budget. We'll show you the reach you're buying, what it would cost to build the same thing yourself, and how few bookings it takes to pay for itself.</p>
+
+  <div class="grid">
+
+    <!-- ============ INPUTS ============ -->
+    <div>
+      <div class="card">
+        <div class="panel-head"><h3 class="panel-title">Your setup</h3></div>
+
+        <div class="ctrl">
+          <div class="ctrl-label"><span>Homes in your portfolio</span><span class="ctrl-val num" id="vHomes">25</span></div>
+          <input type="range" id="homes" min="1" max="500" step="1" value="25" aria-label="Homes in your portfolio">
+          <div class="hint">Every home gets its own creative and audience targeting.</div>
+        </div>
+
+        <div class="ctrl">
+          <div class="ctrl-label"><span>Ad budget per home / month</span><span class="ctrl-val num" id="vPer">$50</span></div>
+          <input type="range" id="per" min="5" max="250" step="5" value="50" aria-label="Ad budget per home per month">
+          <div class="hint">Goes straight to media. We don't take a management cut.</div>
+        </div>
+
+        <div class="ctrl">
+          <div class="ctrl-label"><span>Email sends / month</span><span class="ctrl-val num" id="vSends">1</span></div>
+          <div class="seg" id="sends" style="grid-template-columns:repeat(5,1fr)" role="group" aria-label="Email sends per month">
+            <button type="button" data-v="0">0</button>
+            <button type="button" data-v="1" aria-pressed="true">1</button>
+            <button type="button" data-v="2">2</button>
+            <button type="button" data-v="3">3</button>
+            <button type="button" data-v="4">4</button>
+          </div>
+          <div class="hint">$250 per send. Each send reaches ~220,000 opted-in Wander travelers.</div>
+        </div>
+
+        <div class="rule"></div>
+
+        <div class="ctrl">
+          <div class="ctrl-label"><span>Your average booking value</span></div>
+          <div class="txt"><span class="pre">$</span><input type="text" id="abv" inputmode="numeric" value="4,485" aria-label="Your average booking value"></div>
+          <div class="hint">Wander's platform average is $4,485. Use your own number.</div>
+        </div>
+
+        <div class="ctrl">
+          <div class="ctrl-label"><span>What you keep per booking</span></div>
+          <div class="seg" id="model" style="grid-template-columns:1fr 1fr" role="group" aria-label="Revenue model">
+            <button type="button" data-v="own" aria-pressed="true">Full value</button>
+            <button type="button" data-v="pm">Commission</button>
+          </div>
+          <div id="takeWrap" style="display:none;margin-top:12px">
+            <div class="ctrl-label"><span>Your management commission</span><span class="ctrl-val num" id="vTake">20%</span></div>
+            <input type="range" id="take" min="5" max="50" step="1" value="20" aria-label="Your management commission percent">
+          </div>
+          <div class="hint">Owner-operators keep the full value. Managers keep their commission.</div>
+        </div>
+
+        <div class="spend">
+          <div class="spend-row"><span>Performance marketing</span><span class="v num" id="sAds">$1,250</span></div>
+          <div class="spend-row"><span>Email distribution</span><span class="v num" id="sEmail">$250</span></div>
+          <div class="spend-row"><span>Demand sales team</span><span class="v" style="color:var(--ok)">Included</span></div>
+          <div class="spend-row"><span>Creative + audience data</span><span class="v" style="color:var(--ok)">Included</span></div>
+          <div class="spend-total"><span class="l">Total monthly</span><span class="v num" id="sTotal">$1,500</span></div>
+          <div class="floor" id="floor"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ OUTPUTS ============ -->
+    <div>
+
+      <!-- panel 1 -->
+      <div class="card">
+        <div class="panel-head">
+          <div><div class="panel-num">What you're buying</div><h3 class="panel-title">Monthly reach</h3></div>
+        </div>
+        <div class="big ok num" id="oImp">248.1K – 413.6K</div>
+        <div class="big-cap">Impressions per month across every channel. Reported to you monthly, by channel and by home.</div>
+
+        <div class="chan" id="chan"></div>
+
+        <div class="duo">
+          <div><div class="mini-l">Site visits / month</div><div class="mini-v num" id="oVisits">3.6K</div><div class="mini-h">Clicks through to your homes at our historical channel click rates.</div></div>
+          <div><div class="mini-l">Reach over 12 months</div><div class="mini-v num" id="oYear">4.0M</div><div class="mini-h">Compounding audience, retargetable from month two on.</div></div>
+        </div>
+
+        <div class="chips">
+          <span class="chip">Creative production</span>
+          <span class="chip">Proprietary audience data</span>
+          <span class="chip">Demand sales team</span>
+          <span class="chip">Concierge on every booking</span>
+          <span class="chip">Monthly performance report</span>
+        </div>
+      </div>
+
+      <!-- panel 2 -->
+      <div class="card">
+        <div class="panel-head">
+          <div><div class="panel-num">What it would cost you alone</div><h3 class="panel-title">Build vs. plug in</h3></div>
+        </div>
+
+        <div class="cpm-row">
+          <div><div class="mini-l">Your blended CPM</div><div class="mini-v num" id="oCpm">$4.53</div><div class="mini-h">Direct-to-consumer travel buyers typically pay $18 – $35.</div></div>
+          <div><div class="mini-l">Your cost per site visit</div><div class="mini-v num" id="oCpc">$0.41</div><div class="mini-h">Travel search clicks routinely run $2 – $6.</div></div>
+        </div>
+
+        <div class="rep">
+          <div class="mini-l" style="margin-bottom:12px">Same reach, assembled yourself</div>
+          <div class="rep-row"><span>Media spend (pass-through)</span><span class="v num" id="rMedia">$1,250</span></div>
+          <div class="rep-row"><span>Agency management + trafficking</span><span class="v num" id="rAgency">$2,500</span></div>
+          <div class="rep-row"><span>Creative production, 4 channels</span><span class="v num" id="rCreative">$2,000</span></div>
+          <div class="rep-row"><span>Newsletter placement, 220K luxury travelers</span><span class="v num" id="rEmail">$8,800</span></div>
+          <div class="rep-row"><span>Inbound closer, fractional</span><span class="v num" id="rSales">$2,200</span></div>
+          <div class="rep-row na"><span>Audience data built over millions in spend</span><span class="v">Not for sale</span></div>
+          <div class="rep-tot"><span class="l">Your build cost</span><span class="v num" id="rTotal">$16,750</span></div>
+          <div class="verdict" id="verdict"></div>
+
+          <details class="assump">
+            <summary>How we get these numbers <span class="cv">▾</span></summary>
+            <div class="assump-body">
+              <ul style="margin:0;padding-left:18px">
+                <li>Agency management: 15% of media spend, $2,500 monthly minimum. Standard performance-agency terms.</li>
+                <li>Creative production: static and video assets sized for Meta, Google and AI surfaces, monthly refresh.</li>
+                <li>Newsletter placement: $40 CPM against an opted-in luxury travel audience. Comparable sponsorships run $40 – $150.</li>
+                <li>Inbound closer: quarter of a loaded full-time salary at $105K, benefits and tooling included.</li>
+                <li>Media spend is identical in both columns. We pass it through at cost.</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- panel 3 -->
+      <div class="card">
+        <div class="panel-head">
+          <div><div class="panel-num">What it takes to work</div><h3 class="panel-title">Your break-even</h3></div>
+        </div>
+        <div class="big num" id="oBe">1 booking every 3 months</div>
+        <div class="big-cap">That's the point where this plan has paid for itself out of your own numbers.</div>
+
+        <div class="be-math" id="beMath"></div>
+        <div class="be-ctx" id="beCtx"></div>
+
+        <div class="honest">
+          Reach, sends, sales coverage and reporting are what we deliver and what we're accountable for. Bookings depend on your homes, your pricing and your availability, so we don't forecast them. The figure above is arithmetic on the numbers you entered, not a projection.
+        </div>
+      </div>
+
+      <!-- plan match -->
+      <div class="plans" id="plans">
+        <div class="plan" data-p="free">
+          <div class="pn">List on Wander</div><div class="pp">Boutique operators with special homes</div>
+          <div class="pr">Free</div><div class="pt">Booking fee only</div>
+        </div>
+        <div class="plan" data-p="plus">
+          <div class="pn">Performance Plus</div><div class="pp">Growing portfolios, reach through wander.com</div>
+          <div class="pr">$1,000+/mo</div><div class="pt">No contract</div>
+        </div>
+        <div class="plan" data-p="pro">
+          <div class="pn">Performance Pro</div><div class="pp">Large portfolios, traffic to your own site</div>
+          <div class="pr">$5,000+/mo</div><div class="pt">No contract</div>
+        </div>
+      </div>
+
+      <div class="cta">
+        <a class="btn b1" href="#">Build your custom plan</a>
+        <button class="btn b2" id="copyBtn" type="button">Copy this plan</button>
+        <button class="btn b2" id="pdfBtn" type="button">Save as PDF</button>
+      </div>
+
+      <p class="foot" id="foot"></p>
+
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ---------- model constants (single source of truth) ---------- */
+const M = {
+  emailCost: 250,
+  emailReach: 220000,
+  adMix: [
+    { key:'fb', name:'Facebook',  share:0.40, cpm: 9.60 },
+    { key:'ig', name:'Instagram', share:0.25, cpm:10.85 },
+    { key:'gg', name:'Google',    share:0.30, cpm:14.00 },
+    { key:'ai', name:'ChatGPT',   share:0.05, cpm:20.00 }
+  ],
+  adCtr: 0.023,        // clicks / ad impressions
+  emailCtr: 0.005,     // clicks / recipients
+  spread: 0.25,        // +/- around midpoint
+  bookingFee: 0.08,
+  planFloor: 1000,
+  proFloor: 5000,
+  rep: { agencyPct:0.15, agencyMin:2500, creative:2000, emailCpm:40, sales:2200 }
+};
+
+/* ---------- state ---------- */
+const S = { homes:25, per:50, sends:1, abv:4485, model:'own', take:0.20 };
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const money = n => '$' + Math.round(n).toLocaleString('en-US');
+const trim = s => s.indexOf('.') >= 0 ? s.replace(/\.?0+$/,'') : s;
+const short = n => {
+  if (!isFinite(n) || n === 0) return '0';
+  if (n >= 1e6) return trim((n/1e6).toFixed(2)) + 'M';
+  if (n >= 1e3) return trim((n/1e3).toFixed(1)) + 'K';
+  return Math.round(n).toLocaleString('en-US');
+};
+const num = s => { const v = parseFloat(String(s).replace(/[^0-9.]/g,'')); return isFinite(v) ? v : 0; };
+const setFill = el => {
+  const min = +el.min, max = +el.max;
+  el.style.setProperty('--pct', ((el.value - min) / (max - min) * 100) + '%');
+};
+
+/* ---------- the calculation ---------- */
+function compute() {
+  const adSpend    = S.homes * S.per;
+  const emailSpend = S.sends * M.emailCost;
+  const total      = adSpend + emailSpend;
+
+  const channels = M.adMix.map(c => ({
+    key: c.key, name: c.name,
+    spend: adSpend * c.share,
+    imps: (adSpend * c.share) / c.cpm * 1000
+  }));
+  const adImps    = channels.reduce((a,c) => a + c.imps, 0);
+  const emailImps = S.sends * M.emailReach;
+  if (emailImps > 0) channels.push({ key:'em', name:'Email', spend:emailSpend, imps:emailImps });
+
+  const imps    = adImps + emailImps;
+  const visits  = adImps * M.adCtr + emailImps * M.emailCtr;
+  const cpm     = imps > 0 ? total / imps * 1000 : 0;
+  const cpc     = visits > 0 ? total / visits : 0;
+
+  const take    = S.model === 'own' ? 1 : S.take;
+  const netPer  = S.abv * (1 - M.bookingFee) * take;
+  const beBook  = netPer > 0 ? total / netPer : 0;
+  const beRate  = visits > 0 ? beBook / visits : 0;
+
+  const r = M.rep;
+  const rep = {
+    media:    adSpend,
+    agency:   Math.max(r.agencyMin, adSpend * r.agencyPct),
+    creative: r.creative,
+    email:    emailImps / 1000 * r.emailCpm,
+    sales:    r.sales
+  };
+  rep.total = rep.media + rep.agency + rep.creative + rep.email + rep.sales;
+
+  return { adSpend, emailSpend, total, channels, imps, visits, cpm, cpc, netPer, beBook, beRate, rep, take };
+}
+
+/* ---------- break-even phrasing ---------- */
+function bePhrase(b) {
+  if (b <= 0) return '—';
+  if (b < 1) {
+    const months = Math.round(1 / b);
+    return months <= 1 ? '1 booking a month' : '1 booking every ' + months + ' months';
+  }
+  const n = b < 10 ? trim(b.toFixed(1)) : Math.round(b).toLocaleString('en-US');
+  return n + ' bookings a month';
+}
+
+/* ---------- render ---------- */
+function render() {
+  const c = compute();
+
+  $('vHomes').textContent = S.homes.toLocaleString('en-US');
+  $('vPer').textContent   = money(S.per);
+  $('vSends').textContent = S.sends;
+  $('vTake').textContent  = Math.round(S.take * 100) + '%';
+
+  $('sAds').textContent   = money(c.adSpend);
+  $('sEmail').textContent = money(c.emailSpend);
+  $('sTotal').textContent = money(c.total);
+
+  // plan floor guardrail
+  const floor = $('floor');
+  if (c.total < M.planFloor) {
+    floor.classList.add('show');
+    floor.innerHTML = 'Performance Plus starts at ' + money(M.planFloor) + '/mo. You\'re ' +
+      money(M.planFloor - c.total) + ' short. Add homes, raise the per-home budget, or add a send.';
+  } else floor.classList.remove('show');
+
+  // panel 1
+  $('oImp').textContent = short(c.imps * (1 - M.spread)) + ' – ' + short(c.imps * (1 + M.spread));
+  $('oVisits').textContent = short(c.visits);
+  $('oYear').textContent = short(c.imps * 12);
+
+  const max = Math.max.apply(null, c.channels.map(x => x.imps).concat([1]));
+  $('chan').innerHTML = c.channels.map(x =>
+    '<div class="chan-row"><div class="chan-name">' + x.name + '</div>' +
+    '<div class="track"><div class="bar ' + x.key + '" style="width:' + (x.imps / max * 100).toFixed(1) + '%"></div></div>' +
+    '<div class="chan-v num">' + short(x.imps) + '</div></div>'
+  ).join('');
+
+  // panel 2
+  $('oCpm').textContent = '$' + c.cpm.toFixed(2);
+  $('oCpc').textContent = '$' + c.cpc.toFixed(2);
+  $('rMedia').textContent    = money(c.rep.media);
+  $('rAgency').textContent   = money(c.rep.agency);
+  $('rCreative').textContent = money(c.rep.creative);
+  $('rEmail').textContent    = c.rep.email > 0 ? money(c.rep.email) : '—';
+  $('rSales').textContent    = money(c.rep.sales);
+  $('rTotal').textContent    = money(c.rep.total);
+
+  const mult = c.total > 0 ? c.rep.total / c.total : 0;
+  $('verdict').innerHTML = 'Assembling this yourself runs about <strong>' + money(c.rep.total) +
+    '</strong> a month. On Wander it\'s <strong>' + money(c.total) + '</strong>. Same reach, <strong>' +
+    trim(mult.toFixed(1)) + 'x</strong> the cost to build alone.';
+
+  // panel 3
+  $('oBe').textContent = bePhrase(c.beBook);
+  $('beMath').innerHTML =
+    money(S.abv) + ' average booking, less the 8% booking fee' +
+    (c.take < 1 ? ', times your ' + Math.round(c.take * 100) + '% commission' : '') +
+    ', nets you <span class="v">' + money(c.netPer) + '</span> per booking. ' +
+    'Against <span class="v">' + money(c.total) + '</span> a month, break-even is <span class="v">' +
+    bePhrase(c.beBook) + '</span>.';
+
+  const pct = c.beRate * 100;
+  $('beCtx').innerHTML = 'Put another way: <strong>' +
+    (pct < 0.01 ? 'under 0.01%' : pct.toFixed(2) + '%') +
+    '</strong> of the ' + short(c.visits) +
+    ' monthly site visits would need to book. A typical travel site converts 1.5% to 2.5%.';
+
+  // plan match
+  const which = c.total >= M.proFloor ? 'pro' : (c.total >= M.planFloor ? 'plus' : 'free');
+  document.querySelectorAll('.plan').forEach(p => p.classList.toggle('on', p.dataset.p === which));
+
+  $('foot').textContent =
+    'Impression estimates use Wander\'s trailing channel CPMs and click rates and carry a ±' +
+    Math.round(M.spread * 100) + '% band. Where you land inside that band depends on season, market ' +
+    'competition and creative performance. Build-cost figures are market rates for equivalent scope, ' +
+    'listed above. Your campaign plan comes with channel-level targets before you spend anything.';
+}
+
+/* ---------- wiring ---------- */
+['homes','per','take'].forEach(id => {
+  const el = $(id);
+  el.addEventListener('input', () => {
+    if (id === 'take') S.take = +el.value / 100; else S[id] = +el.value;
+    setFill(el); render();
+  });
+  setFill(el);
+});
+
+$('sends').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  S.sends = +b.dataset.v;
+  [...e.currentTarget.children].forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  render();
+});
+
+$('model').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  S.model = b.dataset.v;
+  [...e.currentTarget.children].forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  $('takeWrap').style.display = S.model === 'pm' ? 'block' : 'none';
+  render();
+});
+
+const abv = $('abv');
+abv.addEventListener('input', () => { S.abv = num(abv.value); render(); });
+abv.addEventListener('blur', () => {
+  S.abv = num(abv.value) || 4485;
+  abv.value = Math.round(S.abv).toLocaleString('en-US');
+  render();
+});
+
+$('pdfBtn').addEventListener('click', () => window.print());
+
+$('copyBtn').addEventListener('click', e => {
+  const c = compute();
+  const txt =
+'Performance by Wander — plan summary\n' +
+'-----------------------------------\n' +
+S.homes + ' homes at ' + money(S.per) + '/home  ·  ' + S.sends + ' email send(s)/mo\n' +
+'Total monthly: ' + money(c.total) + '\n\n' +
+'Monthly reach: ' + short(c.imps * (1 - M.spread)) + '–' + short(c.imps * (1 + M.spread)) + ' impressions\n' +
+'Site visits: ' + short(c.visits) + '/mo\n' +
+'Blended CPM: $' + c.cpm.toFixed(2) + '  ·  Cost per visit: $' + c.cpc.toFixed(2) + '\n' +
+'12-month reach: ' + short(c.imps * 12) + '\n\n' +
+'Cost to build this yourself: ' + money(c.rep.total) + '/mo (' + trim((c.rep.total / c.total).toFixed(1)) + 'x)\n' +
+'Break-even: ' + bePhrase(c.beBook) + ' at ' + money(c.netPer) + ' net per booking\n\n' +
+'Reach and reporting are what Wander delivers. Bookings depend on your homes,\n' +
+'pricing and availability, so they are not forecast here.';
+  navigator.clipboard.writeText(txt).then(() => {
+    const b = e.currentTarget, o = b.textContent;
+    b.textContent = 'Copied';
+    setTimeout(() => { b.textContent = o; }, 1600);
+  });
+});
+
+render();
+</script>
+</body>
+</html>

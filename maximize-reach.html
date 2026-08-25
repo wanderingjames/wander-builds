@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maximize your reach through Wander</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff; --tx:#0f0f0f; --tx2:#6b6b6b; --tx3:#8e8e8e;
+  --line:#e8e6e2; --fill:#e4e2de; --cream:#f4f0e9; --creamline:#e6dfd2;
+  --green:#157f4a;
+  --f:'Instrument Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:var(--f);background:var(--bg);color:var(--tx);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.num{font-variant-numeric:tabular-nums}
+.sec{max-width:1180px;margin:0 auto;padding:80px 48px}
+
+h2{font-size:40px;font-weight:500;letter-spacing:-.03em;line-height:1.08;margin:0 0 8px}
+.sub{font-size:15px;color:var(--tx2);margin:0 0 34px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+
+/* ---------- left inputs ---------- */
+.tops{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:26px}
+.flabel{font-size:13.5px;margin-bottom:11px}
+.tbox{background:var(--fill);border:none;border-radius:10px;padding:14px 16px;width:100%;
+  font-family:inherit;font-size:15px;color:var(--tx);font-variant-numeric:tabular-nums;outline:none}
+.tbox:focus-visible{box-shadow:0 0 0 2px var(--tx)}
+.srow{padding-top:6px}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:5px;border-radius:999px;margin:0;
+  background:linear-gradient(to right,#0f0f0f 0%,#0f0f0f var(--pct,0%),var(--fill) var(--pct,0%),var(--fill) 100%);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:#0f0f0f;border:none;cursor:pointer}
+input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;background:#0f0f0f;border:none;cursor:pointer}
+input[type=range]:focus-visible{outline:2px solid #0f0f0f;outline-offset:6px}
+.ticks{display:flex;justify-content:space-between;font-size:12.5px;color:var(--tx3);margin-top:9px;font-variant-numeric:tabular-nums}
+
+.card{border:1px solid var(--line);border-radius:14px;padding:17px 20px}
+.card+.card{margin-top:12px}
+.crow{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
+.cn{font-size:14px;font-weight:600}
+.cd{font-size:12.5px;color:var(--tx2);margin-top:3px;line-height:1.4}
+.spend .v{font-size:20px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.inc{font-size:13px;color:var(--green)}
+.step{display:inline-flex;align-items:center;gap:10px}
+.step button{font-family:inherit;width:32px;height:32px;border:none;border-radius:999px;background:var(--fill);color:var(--tx);
+  cursor:pointer;font-size:16px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.step button:hover{background:#d8d6d2}
+.step button:focus-visible{outline:2px solid var(--tx);outline-offset:2px}
+.step .n{min-width:16px;text-align:center;font-size:15px;font-variant-numeric:tabular-nums}
+.stepsub{font-size:12.5px;color:var(--tx3);text-align:right;margin-top:5px;font-variant-numeric:tabular-nums}
+.floor{display:none;margin-top:12px;padding:11px 14px;border-radius:11px;font-size:12.5px;line-height:1.45;
+  background:#fdf6e6;border:1px solid #efdfb4;color:#8a6a15}
+.floor.on{display:block}
+
+/* ---------- dark reach panel ---------- */
+.panel{position:relative;overflow:hidden;border-radius:14px;padding:32px;min-height:508px;color:#fff;
+  display:flex;flex-direction:column;
+  background:radial-gradient(120% 90% at 78% 22%,#6b6154 0%,#453d34 42%,#231f1a 100%)}
+.panel::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(70% 55% at 18% 88%,rgba(255,255,255,.07),transparent 70%)}
+.panel>*{position:relative;z-index:1}
+.plabel{font-size:13px;color:rgba(255,255,255,.72)}
+.pbig{font-size:42px;font-weight:500;letter-spacing:-.035em;line-height:1.05;margin-top:6px;font-variant-numeric:tabular-nums}
+.pmeta{font-size:12.5px;color:rgba(255,255,255,.66);margin-top:10px}
+.pmeta .dot{margin:0 7px;color:rgba(255,255,255,.34)}
+.hr{height:1px;background:rgba(255,255,255,.16);margin:24px 0 6px}
+.ch{display:grid;grid-template-columns:1fr auto;gap:16px;padding:7px 0;font-size:13px;align-items:center}
+.ch .n{color:rgba(255,255,255,.86);display:flex;align-items:center;gap:11px}
+.ch .v{font-variant-numeric:tabular-nums}
+.ch.ai .n{color:#fff;font-weight:500}
+.logo{width:24px;height:24px;border-radius:7px;background:rgba(255,255,255,.95);flex:0 0 24px;
+  display:inline-flex;align-items:center;justify-content:center}
+.logo svg{width:14px;height:14px;display:block}
+.tag{font-size:10.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:999px;
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);color:#fff}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,.16)}
+.dl{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.dv{font-size:22px;font-weight:500;letter-spacing:-.025em;margin-top:7px;font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:22px;padding-top:20px;border-top:1px solid rgba(255,255,255,.16)}
+.chip{font-size:11.5px;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.16);color:rgba(255,255,255,.86)}
+.pnote{font-size:12px;color:rgba(255,255,255,.5);line-height:1.5;margin:22px 0 0}
+
+/* ---------- cream row ---------- */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:32px;align-items:start}
+.cc{background:var(--cream);border:1px solid var(--creamline);border-radius:14px;padding:28px 30px;
+  display:flex;flex-direction:column;min-height:352px}
+.cch{font-size:22px;font-weight:500;letter-spacing:-.02em;margin:0 0 3px}
+.ccs{font-size:12.5px;color:var(--tx2);margin:0 0 20px}
+.br{display:grid;grid-template-columns:1fr auto;gap:16px;padding:7px 0;font-size:13.5px;color:var(--tx2)}
+.br .v{color:var(--tx);font-variant-numeric:tabular-nums}
+.br.hero{margin:5px 0;padding:9px 12px;background:#fff;border:1px solid var(--creamline);border-radius:10px}
+.br.hero .n{color:var(--tx);font-weight:600}
+.br.hero .v{color:var(--green);font-weight:600}
+.brt{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:baseline;margin-top:11px;padding-top:11px;border-top:1px solid var(--creamline)}
+.brt .n{font-size:13.5px}
+.brt .v{font-size:19px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.mult{margin-top:auto;padding-top:20px;display:flex;align-items:baseline;gap:11px}
+.mult .big{font-size:40px;font-weight:500;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums}
+.mult .cap{font-size:13px;color:var(--tx2);line-height:1.35}
+.bebig{font-size:40px;font-weight:500;letter-spacing:-.035em;line-height:1.05;font-variant-numeric:tabular-nums}
+.becap{font-size:14px;color:var(--tx2);margin-top:8px}
+.bemath{margin-top:20px;padding:13px 15px;background:#fff;border:1px solid var(--creamline);border-radius:10px;
+  font-size:13px;color:var(--tx2);line-height:1.55}
+.bemath .v{color:var(--tx);font-weight:600;font-variant-numeric:tabular-nums}
+.bectx{font-size:13px;color:var(--tx2);margin-top:16px;line-height:1.5}
+.bectx strong{color:var(--tx);font-weight:600}
+.benote{margin-top:auto;padding-top:18px;font-size:11.5px;color:var(--tx3);line-height:1.5}
+
+/* ---------- close ---------- */
+.close{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:30px}
+.btn{font-family:inherit;font-size:14px;font-weight:500;padding:13px 26px;border-radius:999px;border:none;
+  background:#0f0f0f;color:#fff;cursor:pointer;text-decoration:none;display:inline-block}
+.btn:hover{background:#2a2a2a}
+.btn:focus-visible{outline:2px solid #0f0f0f;outline-offset:3px}
+.tier{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--tx2)}
+.pill{font-size:12px;font-weight:500;padding:5px 12px;border-radius:999px;background:var(--fill);border:1px solid var(--creamline)}
+
+@media (max-width:1000px){
+  .sec{padding:64px 28px}
+  .grid,.row2{grid-template-columns:1fr;gap:24px}
+  .panel,.cc{min-height:0}
+}
+@media (max-width:600px){
+  .sec{padding:52px 18px}h2{font-size:30px}.tops{grid-template-columns:1fr;gap:22px}
+  .pbig,.bebig,.mult .big{font-size:32px}.panel,.cc{padding:24px 20px}.duo{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- shared gradient defs for the Instagram mark -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="ig" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0%" stop-color="#F58529"/><stop offset="35%" stop-color="#DD2A7B"/>
+    <stop offset="70%" stop-color="#8134AF"/><stop offset="100%" stop-color="#515BD4"/>
+  </linearGradient>
+</defs></svg>
+
+<section class="sec">
+  <h2>Maximize your reach through Wander</h2>
+  <p class="sub">Dial in a monthly budget and see the impressions Wander&rsquo;s channels deliver</p>
+
+  <!-- ============ ROW 1 ============ -->
+  <div class="grid">
+
+    <div>
+      <div class="tops">
+        <div>
+          <label class="flabel" for="homes">Homes managed</label>
+          <input class="tbox num" id="homes" type="text" inputmode="numeric" value="25">
+        </div>
+        <div>
+          <div class="flabel">Monthly budget per home</div>
+          <div class="srow">
+            <input type="range" id="per" min="5" max="250" step="5" value="110" aria-label="Monthly budget per home">
+            <div class="ticks"><span>$5</span><span>$250</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card spend">
+        <div class="crow">
+          <div><div class="cn">Total monthly spend</div><div class="cd num" id="split">$2,750 ads + $250 email</div></div>
+          <div class="v num" id="tot">$3,000</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="crow">
+          <div><div class="cn">Performance marketing</div><div class="cd">High-converting ads on Facebook, Instagram, Google, TikTok and ChatGPT</div></div>
+          <div class="inc">Included</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="crow">
+          <div><div class="cn">Demand sales</div><div class="cd">Dedicated team of experts and capturing high AOV bookings from premium guests</div></div>
+          <div class="inc">Included</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="crow">
+          <div><div class="cn">Email marketing</div><div class="cd">Direct email distribution to hundreds of thousands of high-intent travelers</div></div>
+          <div>
+            <div class="step">
+              <button type="button" id="mn" aria-label="Fewer sends">&minus;</button>
+              <span class="n num" id="vS">1</span>
+              <button type="button" id="pl" aria-label="More sends">+</button>
+            </div>
+            <div class="stepsub">$250 per send</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="floor" id="floor"></div>
+    </div>
+
+    <div class="panel">
+      <div class="plabel">Estimated monthly impressions</div>
+      <div class="pbig num" id="imp">347.9K&ndash;579.8K</div>
+      <div class="pmeta">
+        <span id="visits">&asymp; 5.1K site visits at a blended 1.1% CTR</span>
+        <span class="dot">&middot;</span><span class="num" id="cpm">$6.47 CPM</span>
+      </div>
+
+      <div class="hr"></div>
+      <div id="chans"></div>
+
+      <div class="duo">
+        <div><div class="dl">Cost per site visit</div><div class="dv num" id="cpv">$0.59</div></div>
+        <div><div class="dl">Reach over 12 months</div><div class="dv num" id="yr">5.57M</div></div>
+      </div>
+
+      <div class="chips">
+        <span class="chip">Proprietary audience data</span>
+        <span class="chip">Creative production</span>
+        <span class="chip">Concierge on every booking</span>
+        <span class="chip">Monthly performance report</span>
+      </div>
+
+      <p class="pnote">Directional estimate from historical travel-vertical benchmarks. Season, market competition and creative performance move you inside the range. Final projections come with your campaign plan.</p>
+    </div>
+  </div>
+
+  <!-- ============ ROW 2 ============ -->
+  <div class="row2">
+
+    <div class="cc">
+      <h3 class="cch">Build vs plug in</h3>
+      <p class="ccs">The same reach, assembled yourself</p>
+
+      <div class="br"><span class="n">Media spend</span><span class="v" id="rMedia">$2,750</span></div>
+      <div class="br"><span class="n">Agency management</span><span class="v" id="rAgency">$2,500</span></div>
+      <div class="br"><span class="n">Creative production</span><span class="v" id="rCreative">$2,000</span></div>
+      <div class="br"><span class="n">Newsletter placement</span><span class="v" id="rEmail">$8,800</span></div>
+      <div class="br"><span class="n">Inbound closer</span><span class="v" id="rSales">$2,200</span></div>
+      <div class="br hero"><span class="n">Proprietary audience data</span><span class="v">Not for sale</span></div>
+
+      <div class="brt"><span class="n">Build it yourself</span><span class="v num" id="rTotal">$18,250</span></div>
+      <div class="brt"><span class="n">Plug into Wander</span><span class="v num" id="rOurs">$3,000</span></div>
+
+      <div class="mult">
+        <div class="big num" id="mult">6.1&times;</div>
+        <div class="cap">cheaper than building<br>the same machine</div>
+      </div>
+    </div>
+
+    <div class="cc">
+      <h3 class="cch">Your break-even</h3>
+      <p class="ccs">What it takes for this plan to pay for itself</p>
+
+      <div class="bebig" id="beBig">1 booking</div>
+      <div class="becap" id="beCap">covers 1.4 months of this plan</div>
+
+      <div class="bemath" id="beMath"></div>
+      <div class="bectx" id="beCtx"></div>
+
+      <p class="benote">Reach, sends, sales coverage and reporting are what we deliver. Bookings depend on your homes, pricing and availability, so the figure above is arithmetic, not a forecast.</p>
+    </div>
+  </div>
+
+  <div class="close">
+    <a class="btn" href="#">Build your custom plan</a>
+    <div class="tier"><span class="pill" id="pill">Performance Plus</span><span id="tierTxt">at this spend, no contract, cancel any time</span></div>
+  </div>
+
+</section>
+
+<script>
+'use strict';
+
+/* ---- channel marks. Swap each string for the official brand SVG. ---- */
+const LOGO={
+  fb:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#1877F2" d="M12 2C6.48 2 2 6.48 2 12c0 5 3.66 9.13 8.44 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99C18.34 21.13 22 17 22 12c0-5.52-4.48-10-10-10z"/></svg>',
+  ig:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.6" y="2.6" width="18.8" height="18.8" rx="5.6" fill="none" stroke="url(#ig)" stroke-width="2.2"/><circle cx="12" cy="12" r="4.4" fill="none" stroke="url(#ig)" stroke-width="2.2"/><circle cx="17.3" cy="6.7" r="1.35" fill="url(#ig)"/></svg>',
+  gg:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.24c0-.79-.07-1.54-.2-2.27H12v4.3h5.4c-.23 1.25-.94 2.31-2 3.02l3.26 2.53c1.9-1.76 2.94-4.35 2.94-7.58z"/><path fill="#34A853" d="M12 22c2.7 0 4.96-.9 6.62-2.42l-3.26-2.53c-.9.6-2.05.96-3.36.96-2.6 0-4.8-1.76-5.58-4.13l-3.4 2.62C4.68 19.8 8.06 22 12 22z"/><path fill="#FBBC05" d="M6.42 13.88a6.1 6.1 0 0 1 0-3.76L3.02 7.5a10 10 0 0 0 0 9l3.4-2.62z"/><path fill="#EA4335" d="M12 6.13c1.47 0 2.79.5 3.83 1.5l2.87-2.87C16.95 3.05 14.7 2 12 2 8.06 2 4.68 4.2 3.02 7.5l3.4 2.62C7.2 7.9 9.4 6.13 12 6.13z"/></svg>',
+  ai:'<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#0f0f0f" stroke-width="1.7"><ellipse cx="12" cy="12" rx="3.3" ry="9"/><ellipse cx="12" cy="12" rx="3.3" ry="9" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="3.3" ry="9" transform="rotate(120 12 12)"/></g></svg>',
+  em:'<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#157f4a" stroke-width="1.9" stroke-linejoin="round"><rect x="2.6" y="5" width="18.8" height="14" rx="2.6"/><path d="M3.4 6.4 12 13l8.6-6.6"/></g></svg>'
+};
+
+const M={
+  emailCost:250, emailReach:220000, maxSends:4,
+  mix:[{k:'fb',n:'Facebook',s:.40,cpm:9.60},{k:'ig',n:'Instagram',s:.25,cpm:10.85},
+       {k:'gg',n:'Google',s:.30,cpm:14.00},{k:'ai',n:'ChatGPT',s:.05,cpm:20.00,tag:'AI search'}],
+  ctr:.011, spread:.25,
+  tripValue:4485, bookingFee:.08, plusFloor:1000, proFloor:5000,
+  rep:{agencyPct:.15, agencyMin:2500, creative:2000, emailCpm:40, sales:2200}
+};
+const S={homes:25,per:110,sends:1};
+const $=i=>document.getElementById(i);
+const money=n=>'$'+Math.round(n).toLocaleString('en-US');
+const trim=s=>s.indexOf('.')>=0?s.replace(/\.?0+$/,''):s;
+const short=n=>!isFinite(n)||n===0?'0':n>=1e6?trim((n/1e6).toFixed(2))+'M':n>=1e3?trim((n/1e3).toFixed(1))+'K':Math.round(n).toLocaleString('en-US');
+const fill=e=>e.style.setProperty('--pct',((e.value-e.min)/(e.max-e.min)*100)+'%');
+
+function calc(){
+  const ads=S.homes*S.per, em=S.sends*M.emailCost, total=ads+em;
+  const ch=M.mix.map(c=>({k:c.k,n:c.n,tag:c.tag,ai:!!c.tag,imps:ads*c.s/c.cpm*1000}));
+  const emImps=S.sends*M.emailReach;
+  if(emImps>0) ch.push({k:'em',n:'Email marketing',imps:emImps});
+  const imps=ch.reduce((a,c)=>a+c.imps,0);
+  const visits=imps*M.ctr;
+  const r=M.rep;
+  const rep={media:ads, agency:Math.max(r.agencyMin,ads*r.agencyPct), creative:r.creative,
+             email:emImps/1000*r.emailCpm, sales:r.sales};
+  rep.total=rep.media+rep.agency+rep.creative+rep.email+rep.sales;
+  const net=M.tripValue*(1-M.bookingFee);
+  return {ads,em,total,ch,imps,visits,rep,net,
+    cpm:imps>0?total/imps*1000:0, cpv:visits>0?total/visits:0, books:net>0?total/net:0};
+}
+
+function render(){
+  const c=calc();
+  $('vS').textContent=S.sends;
+  $('split').textContent=money(c.ads)+' ads + '+money(c.em)+' email';
+  $('tot').textContent=money(c.total);
+
+  const f=$('floor');
+  if(c.total<M.plusFloor){f.classList.add('on');
+    f.innerHTML='Performance Plus starts at '+money(M.plusFloor)+'/mo. You are '+money(M.plusFloor-c.total)+
+      ' short. Add homes, raise the per-home budget or add a send.';
+  } else f.classList.remove('on');
+
+  $('imp').textContent=short(c.imps*(1-M.spread))+'\u2013'+short(c.imps*(1+M.spread));
+  $('visits').textContent='\u2248 '+short(c.visits)+' site visits at a blended '+(M.ctr*100).toFixed(1)+'% CTR';
+  $('cpm').textContent='$'+c.cpm.toFixed(2)+' CPM';
+  $('cpv').textContent='$'+c.cpv.toFixed(2);
+  $('yr').textContent=short(c.imps*12);
+
+  $('chans').innerHTML=c.ch.map(x=>
+    '<div class="ch'+(x.ai?' ai':'')+'"><div class="n">'+
+    '<span class="logo">'+(LOGO[x.k]||'')+'</span>'+x.n+
+    (x.tag?'<span class="tag">'+x.tag+'</span>':'')+
+    '</div><div class="v num">'+short(x.imps)+'</div></div>').join('');
+
+  $('rMedia').textContent=money(c.rep.media);
+  $('rAgency').textContent=money(c.rep.agency);
+  $('rCreative').textContent=money(c.rep.creative);
+  $('rEmail').textContent=c.rep.email>0?money(c.rep.email):'\u2014';
+  $('rSales').textContent=money(c.rep.sales);
+  $('rTotal').textContent=money(c.rep.total);
+  $('rOurs').textContent=money(c.total);
+  $('mult').innerHTML=(c.total>0?trim((c.rep.total/c.total).toFixed(1)):'\u2014')+'&times;';
+
+  const b=c.books;
+  if(b>0&&b<1){
+    $('beBig').textContent='1 booking';
+    $('beCap').textContent='covers '+trim((1/b).toFixed(1))+' months of this plan';
+  }else if(b>0){
+    $('beBig').textContent=trim(b.toFixed(1))+' bookings';
+    $('beCap').textContent='a month covers this plan';
+  }else{$('beBig').textContent='\u2014';$('beCap').textContent='';}
+
+  $('beMath').innerHTML='Wander\u2019s <span class="v">'+money(M.tripValue)+
+    '</span> average trip value, net of the industry-low 8% fee, is <span class="v">'+money(c.net)+
+    '</span> against <span class="v">'+money(c.total)+'</span> a month.';
+
+  const pct=c.visits>0?b/c.visits*100:0;
+  $('beCtx').innerHTML='That is <strong>'+(pct<.01?'under 0.01%':pct.toFixed(2)+'%')+
+    '</strong> of your '+short(c.visits)+' monthly site visits. Travel sites typically convert 1.5&ndash;2.5%.';
+
+  const pro=c.total>=M.proFloor, plus=c.total>=M.plusFloor;
+  $('pill').textContent=pro?'Performance Pro':plus?'Performance Plus':'List on Wander';
+  $('tierTxt').textContent=plus?'at this spend, no contract, cancel any time'
+    :'booking fee only until you reach $1,000/mo';
+}
+
+const per=$('per');
+per.addEventListener('input',()=>{S.per=+per.value;fill(per);render()});
+fill(per);
+
+const homes=$('homes');
+homes.addEventListener('input',()=>{const v=parseInt(String(homes.value).replace(/[^0-9]/g,''),10);
+  S.homes=isFinite(v)?Math.min(5000,Math.max(0,v)):0;render()});
+homes.addEventListener('blur',()=>{if(!S.homes)S.homes=1;
+  homes.value=S.homes.toLocaleString('en-US');render()});
+
+$('mn').addEventListener('click',()=>{S.sends=Math.max(0,S.sends-1);render()});
+$('pl').addEventListener('click',()=>{S.sends=Math.min(M.maxSends,S.sends+1);render()});
+
+render();
+</script>
+</body>
+</html>
